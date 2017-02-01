@@ -1,0 +1,52 @@
+
+@media screen and (max-width: 1024px) {
+
+}
+@media screen and (max-width: 768px) {
+	.page { width: 100%; }
+	.navigation .nav.desktop { display: none; }
+	.navigation .nav.mobile { display: block; }
+	.navigation { background-color: yellow; }
+}
+
+@media screen and (max-width: 600px) {
+.navigation { background-color: red; }
+}
+
+@media screen and (max-width: 500px) {
+.navigation { background-color: green; }
+.menu-icon {
+	background: gray none repeat scroll 0 0; cursor: pointer;
+	clear: left;
+	float: left;
+	height: 30px;
+	padding-left: 9px;
+	padding-top: 7px;
+	text-align: center;
+	vertical-align: middle;
+	width: 44px;
+}
+}
+
+@media screen and (max-width: 480px) {
+.navigation { background-color: white; }
+.navigation ul.nav.mobile  li { float: left; width: 100%; }
+
+.menu-icon span {
+	background-color: black;
+	border-radius: 8px;
+	float: left;
+	height: 3px;
+	width: 35px;
+	margin-top: 2px;
+}
+
+}
+
+@media screen and (max-width: 360px) {
+.navigation { background-color: pink; }
+}
+
+@media screen and (max-width: 320px) {
+.navigation { background-color: purple; }
+}

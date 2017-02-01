@@ -1,0 +1,10 @@
+.form_container label { float: left; width: 100px; }
+form input { width: 200px;}
+textarea { resize: none; height: 70px; width: 200px;}
+.form_row { padding: 3px; }
+.form_row input[type=submit] { padding: 8px; width: 120px; }
+.all_records { /* border: 1px solid #ccc;  */ }
+.all_records tr:not(.thead) { cursor: move; }
+.all_records tr.thead {}
+.all_records tr { border: 1px solid #ccc; }
+.all_records th { text-align: left;}

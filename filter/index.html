@@ -1,0 +1,76 @@
+<input type="text" id="search_input" />
+
+<ul id="search_list">
+    <li>item1</li>
+    <li>Item2</li>
+    <li>Denim</li>
+    <li>denim</li>
+    <li>Item2</li>
+    <li>item3</li>
+</ul>
+
+
+
+<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="jquery.fastLiveFilter.js"></script>
+
+<script type="text/javascript">
+
+ $(function() {
+        $('#search_input').fastLiveFilter('#search_list');
+    });
+
+
+	/* jQuery(function() {
+		var valueToSearch = "item1"; // this one should come from the search box
+		var allListItems = $("ul > li");
+		var filteredItems = allListItems.filter(function(index) {
+		var listItemValue = $(this).text();
+		var hasText = listItemValue.indexOf(valueToSearch) > -1;
+			return hasText;
+		});
+	}); */
+
+	/*
+$(function(){
+
+   
+
+});*/
+	
+/*jQuery(document).ready(function(){
+		
+	$('input[type="text"]').keyup(function(){
+
+		var searchText = $(this).val();
+
+		$('ul > li').each(function(){
+
+			var currentLiText = $(this).text(),
+				 showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+
+			$(this).toggle(showCurrentLi);
+
+		});
+	});
+	
+	*/
+	
+	/*$('input[type="text"]').keyup(function(){
+	 
+	 var that = this, $allListElements = $('ul > li');
+
+	 var $matchingListElements = $allListElements.filter(function(i, li){
+		  var listItemText = $(li).text().toUpperCase(), searchText = that.value.toUpperCase();
+		  return ~listItemText.indexOf(searchText);
+	 });
+	 
+	 $allListElements.hide();
+	 $matchingListElements.show();
+	 
+	});*/
+
+//});
+
+
+</script>

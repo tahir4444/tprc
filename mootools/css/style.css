@@ -1,0 +1,13 @@
+h1.selected {
+    color: #1b609a;
+}
+
+/* irrelevant */
+body {
+    font-family: helvetica;
+}
+
+li {
+    cursor: pointer;
+}
+

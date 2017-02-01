@@ -1,0 +1,23 @@
+
+body { margin: 0; padding: 0;}
+
+.page { width: 1160px; margin: 0 auto; border}
+
+nav .navigation ul {	
+	list-style: none;
+	width: 100%;
+}
+
+
+.navigation {
+    background-color: #ccc;
+    border: 1px solid red;
+    float: left;
+    width: 100%;
+}
+
+#ddmenu div.menu-icon { display:none; }
+
+.navigation .nav.mobile { display: none; }
+
+nav .navigation ul  li { float: left; width: 20%; }

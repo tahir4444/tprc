@@ -1,0 +1,16 @@
+.main {
+	width: 1100px;
+	margin: 0 auto;
+	/* border: 1px solid #ccc; */
+
+}
+
+.container {
+		 /* border: 1px solid #ccc; */
+		 width: 1100px;
+	}
+	.submit_container {
+		 margin-left: 368px;
+	}
+
+p {width: 155px;}
