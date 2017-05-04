@@ -9,8 +9,8 @@
 	
 	// echo sys_get_temp_dir();
 	
-	echo FCPATH . 'application/cache/sessions/'
+	// echo FCPATH . 'application/cache/sessions/'
 	
-	
+	echo '#'.time() . ' New Enquiry';
 	
 ?>

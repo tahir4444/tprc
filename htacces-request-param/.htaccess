@@ -1,0 +1,6 @@
+RewriteEngine on
+#RewriteCond %{QUERY_STRING} !(^|&)redirect=no($|&)
+#RewriteCond %{QUERY_STRING} ^(.*)redirect=no(.*)$
+RewriteCond %{QUERY_STRING} ^(.*)redirect(.*)$
+
+RewriteRule  ^/r-index.php [L]
