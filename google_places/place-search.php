@@ -20,11 +20,8 @@ margin: 0;
 padding: 0;
 }
 </style>
-<script type='text/javascript' src="http://techmagnate.co.in/wavecity/wp-includes/js/jquery/jquery.js"></script>
-<script>
-// This example requires the Places library. Include the libraries=places
-// parameter when you first load the API. For example:
-// <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
 
 var map;
 var infowindow;
@@ -55,6 +52,10 @@ function initMap(type = 'bus_station') {
 }
 
 function callback(results, status) {
+   
+   /* console.log(results); */
+   /* console.log(status); */
+   
    if (status === google.maps.places.PlacesServiceStatus.OK) {
       for (var i = 0; i < results.length; i++) {
          createMarker(results[i]);
@@ -63,9 +64,27 @@ function callback(results, status) {
 }
 
 function createMarker(place) {
+   
    var placeLoc = place.geometry.location;
    
-   console.log(place);
+  // console.log(place);
+   // console.log('Lat: '+placeLoc.lat() + ', Lang: ' + placeLoc.lng());
+   /* console.log(placeLoc.lng); */
+   // console.log(place.place_id);
+   
+   var routes   =  {
+      lat: placeLoc.lat(),
+      lng: placeLoc.lng(),
+      placeId: place.place_id,
+      name: place.name,
+      // types: place.types,
+      // id: place.id,
+   }
+   
+   /* console.log(routes) */
+   
+   get_multiple_directions(routes)
+   
    
    var marker = new google.maps.Marker({
       map: map,
@@ -88,6 +107,20 @@ function createMarker(place) {
    });
 }
 
+function get_multiple_directions(routes) {
+   
+   console.log(routes);
+   /* var directionsService = new google.maps.DirectionsService;
+   var directionsDisplay = new google.maps.DirectionsRenderer;
+   var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 7,
+      center: {lat: 28.5736571, lng: 77.2560474}
+   });
+   
+   calculateAndDisplayRoute(directionsService, directionsDisplay,routes); */
+   
+}
+
 function getDirections() {
    
    var directionsService = new google.maps.DirectionsService;
@@ -108,18 +141,17 @@ function getDirections() {
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
    
-   /* console.log('Origin: ' + document.getElementById('start').value); */
-   /* console.log('Destination : ' + document.getElementById('end').value); */
-   
    directionsService.route({
+         /* origin: {'placeId': originPlaceId}, */
          origin: document.getElementById('start').value,
          destination: document.getElementById('end').value,
-         travelMode: 'TRANSIT'
+         /* destination: {'placeId': destinationPlaceId}, */
+         // travelMode: 'DRIVING'
+         // travelMode: 'TRANSIT'
+         // travelMode: 'WALKING'
+         travelMode: 'DRIVING'
    }, function(response, status) {
-   
-      /* console.log(directionsDisplay);routes */
-      /* console.log(response); */
-      /* console.log(response['routes']); */
+
       
       console.log(response['routes'][0].legs);
    
@@ -156,9 +188,6 @@ jQuery(document).on('ready',function(){
       
    });
    
-   
-   
-  
    document.getElementById('get_directions').addEventListener('click', getDirections);
 
 });
@@ -170,6 +199,7 @@ jQuery(document).on('ready',function(){
 
 <div id="available_amenities" style="width: 300px; float: left;">
    <div class="parameters">
+      <input type="hidden" class="origin_place_id" id="origin_place_id" value="ChIJvUf7g6PjDDkRE8zQIiadotU">
       <input type="hidden" class="origin" id="origin"value="28.5736571|77.2560474">
       <input type="hidden" class="destination" id="destination" value="28.5712781|77.2588765">
       <input type="hidden" class="start" id="start" value="28.5736571,77.2560474">
