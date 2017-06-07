@@ -36,7 +36,7 @@ function initMap(type = 'bus_station') {
    map = new google.maps.Map(document.getElementById('map'), {
       center: pyrmont,
       zoom: 13
-   });
+      });
    
    infowindow = new google.maps.InfoWindow();
    

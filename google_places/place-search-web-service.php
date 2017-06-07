@@ -54,11 +54,7 @@ function initMap(type = 'bus_station') {
       // icon: iconBase + 'parking_lot_maps.png'
       // icon: iconBase + 'info-i_maps.png',
       icon: {
-         // path: google.maps.SymbolPath.CIRCLE,
-         path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-        /*  path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-         path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
-         path: google.maps.SymbolPath.FORWARD_OPEN_ARROW, */
+         path: google.maps.SymbolPath.CIRCLE,
          scale: 10
        },
    });
@@ -71,7 +67,7 @@ function initMap(type = 'bus_station') {
    
    var request = {
       location: pyrmont,
-      radius: 2000,
+      radius: 1000,
       // /* type: ['bus_station'] */
       // /* type: ['restaurant'] */
       // /* type: ['<?php //echo $_GET['type']; ?>'] */
@@ -79,16 +75,19 @@ function initMap(type = 'bus_station') {
    };
    
    service.nearbySearch(request, callback);
-
+   // service.getDetails(request, callback);
 }
 
 function callback(results, status) {
    
+   /* console.log(results);
+  console.log(status);
+  console.error(status); */
+  
+  
+  getPlacesDirectionFromAjax(results);
+   
    if (status === google.maps.places.PlacesServiceStatus.OK) {
-      /* THR */
-         get_multiple_directions(results);
-      /* THR */
-
       for (var i = 0; i < results.length; i++) {
          createMarker(results[i]);
       }
@@ -97,7 +96,8 @@ function callback(results, status) {
 
 function filterObject(results) {
    
-   var routes   = [];   
+   var routes   = {};
+   
    
    for (var i = 0; i < results.length; i++) {
       routes[i]   = {
@@ -108,93 +108,126 @@ function filterObject(results) {
       };
    }
    
-   return routes;  
+   return routes;
+   
+   
+}
+
+function getPlacesDirectionFromAjax(results) {
+   
+   var filterData =  filterObject(results);
+   
+   // console.log(filterData);
+   
+   jQuery.ajax({
+      url: 'ajax/handle.php',
+      type: "POST",
+      dataType: "json",
+      data: {data:filterData},
+      success: function(response){
+         // var $response = jQuery(response);
+         
+         console.log(response);
+         
+         if(response.result == true) {
+            
+         }
+         
+         
+         
+      }
+
+   });
    
 }
 
 function createMarker(place) {
-
-   var placeLoc = place.geometry.location;   
-
+   
+   var placeLoc = place.geometry.location;
+   
+   /* console.log(place); */
+   
+   var routes   =  {
+      lat: placeLoc.lat(),
+      lng: placeLoc.lng(),
+      placeId: place.place_id,
+      name: place.name,
+    }
+   
+   /* get_multiple_directions(routes); */
+   
    var marker = new google.maps.Marker({
       map: map,
       position: place.geometry.location,
-      animation: google.maps.Animation.DROP,
-      // animation: google.maps.Animation.BOUNCE,
+      // animation: google.maps.Animation.DROP,
+      animation: google.maps.Animation.BOUNCE,
       icon: {
          url: place.icon,
          anchor: new google.maps.Point(20, 20),
          scaledSize: new google.maps.Size(20, 20)
-      }
+       }
    });
-
+   
    google.maps.event.addListener(marker, 'click', function() {
-
+   
       infowindow.setContent('<strong style="font-weight: bold;">' + place.name + '</strong>, <br />Address: ' + place.vicinity);
       infowindow.open(map, this);
-
-
+      
+      
    });
 }
 
-function get_multiple_directions(results) {
+function get_multiple_directions(routes) {
    
-   var routes  =  filterObject(results);
-   /* console.log(routes); */
-   /* console.log(routes.length); */
+   // console.log(routes);
    var directionsService = new google.maps.DirectionsService;
    var directionsDisplay = new google.maps.DirectionsRenderer;
+  /*  var map = new google.maps.Map(document.getElementById('map'), {
+     // zoom: 7, 
+      center: {lat: 28.5736571, lng: 77.2560474}
+   }); */
    
+   calcAndGetDirection(directionsService, directionsDisplay,routes);
    
-   var output  =  jQuery('#content_output.content_output ul#output_list');
-   
-   output.html('');
-   
-   for (var i = 0; i < routes.length; i++) {
-   
-      // console.log(routes[i]);
-   
-     calcAndGetDirection(directionsService, directionsDisplay,routes[i]);
-     
-   }
-   
-   /* console.log(routes); */
 }
 
 
 function calcAndGetDirection(directionsService, directionsDisplay,routes) {
    
-   // console.log(routes);
-   
    directionsService.route({
          origin: {'placeId': document.getElementById('origin_place_id').value},
+         // origin: document.getElementById('start').value,
+         // destination: document.getElementById('end').value,
          destination: {'placeId': routes.placeId},
+         // travelMode: 'DRIVING'
+         // travelMode: 'TRANSIT'
+         // travelMode: 'WALKING'
          travelMode: 'DRIVING'
    }, function(response, status) {
+      console.log(status);
       
       /* console.log(response['routes'][0].legs[0].distance.text); */
-      
-         // console.log(response);
    
       if (status === 'OK') {
-         
+      
+         /* directionsDisplay.setDirections(response); */
+
          var output  =  jQuery('#content_output.content_output ul#output_list');
          
-         var outputHtml =  '<li>';
+         var outputHtml =  '<li>';        
          
          outputHtml +=  '<div class="name_distance">';
          // outputHtml +=  'Address: '+response['routes'][0].legs[0].start_address;
-         outputHtml +=  ' <strong>Name</strong>: <a class="get_directions" href="javascript:void(0);" rel="'+response['routes'][0].legs[0].end_location.lat()+'" data-cordinate-lat="'+response['routes'][0].legs[0].end_location.lat()+'" data-cordinate-lang="'+response['routes'][0].legs[0].end_location.lng()+'" data-place-id="'+routes.placeId+'">' + routes.name + '</a>';
+         outputHtml +=  ' <strong>Name</strong>: '+routes.name;
          outputHtml +=  ' <strong>Address</strong>: '+response['routes'][0].legs[0].end_address;
          outputHtml +=  ' <strong>Distance</strong>: '+response['routes'][0].legs[0].distance.text;
          outputHtml +=  ' <strong>Duration</strong>: '+response['routes'][0].legs[0].duration.text;
          outputHtml +=  '</div>';
          outputHtml +=  '</li>';
          
-         output.append(outputHtml);
+         // output.innerHTML = output.innerHTML+=
          
-         // console.log(response['routes'][0].legs);
-         
+         output.append(outputHtml);        
          
       } /* else {
          window.alert('Directions request failed due to ' + status);
@@ -207,7 +240,6 @@ function getDirections() {
    
    var directionsService = new google.maps.DirectionsService;
    var directionsDisplay = new google.maps.DirectionsRenderer;
-   
    var map = new google.maps.Map(document.getElementById('map'), {
       zoom: 7,
       center: {lat: 28.5736571, lng: 77.2560474}
@@ -215,41 +247,28 @@ function getDirections() {
    
    calculateAndDisplayRoute(directionsService, directionsDisplay)
    
-   directionsDisplay.setMap(map);   
+   directionsDisplay.setMap(map);
+
+   
    /* document.getElementById('end').addEventListener('change', onChangeHandler); */
    
 }
 
-function getGoogleMapDirections(placeRoute) {
-   
-   var directionsService = new google.maps.DirectionsService;
-   var directionsDisplay = new google.maps.DirectionsRenderer;
-   
-   var map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 3,
-      center: {lat: 28.5736571, lng: 77.2560474}
-   });
-   
-   calculateAndDisplayRoute(directionsService, directionsDisplay,placeRoute)
-   
-   directionsDisplay.setMap(map);
-
-}
-
-function calculateAndDisplayRoute(directionsService, directionsDisplay,placeRoute) {
+function calculateAndDisplayRoute(directionsService, directionsDisplay) {
    
    directionsService.route({
-         origin: {'placeId': placeRoute.originPlaceId},
-         // origin: document.getElementById('start').value,
-         // destination: document.getElementById('end').value,
-         destination: {'placeId': placeRoute.destinationPlaceId},
+         /* origin: {'placeId': originPlaceId}, */
+         origin: document.getElementById('start').value,
+         destination: document.getElementById('end').value,
+         /* destination: {'placeId': destinationPlaceId}, */
          // travelMode: 'DRIVING'
          // travelMode: 'TRANSIT'
          // travelMode: 'WALKING'
          travelMode: 'DRIVING'
    }, function(response, status) {
+
       
-      /* // console.log(response['routes'][0].legs); */
+      console.log(response['routes'][0].legs);
    
       if (status === 'OK') {
          directionsDisplay.setDirections(response);
@@ -257,6 +276,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay,placeRout
          window.alert('Directions request failed due to ' + status);
       }
    });
+   
+   /* document.getElementById('get_directions').addEventListener('click', onChangeHandler); */
+  
 
 }
 
@@ -268,40 +290,20 @@ jQuery(document).on('ready',function(){
       e.preventDefault();
       
       var this_e        =  jQuery(this);
-      var thisLocation  =  this_e.attr('data-location-type');      
+      var thisLocation  =  this_e.attr('data-location-type');
+      
+      
+      /* console.log(this_e.attr('data-location-type')); */
+      
+      /* var new_url =  "https://maps.googleapis.com/maps/api/js?key=AIzaSyCx_utm4l1b07fsg1FfSYfb63OMqamhK_Y&libraries=" + thisLocation + "&callback=initMap"; */
+
+      /* jQuery('#googleLocation').attr('src',new_url); */
       
       initMap(thisLocation);
       
    });
    
-   // document.getElementsByClassName("get_directions").addEventListener('click', getDirections);
-   // document.getElementById('get_directions').addEventListener('click', getDirections);
-   
-   jQuery(document).on('click','a.get_directions',function(e){
-   
-      var this_e  =  jQuery(this);
-      
-      var lat     =  this_e.attr('data-cordinate-lat');
-      var lang    =  this_e.attr('data-cordinate-lang');
-      var placeId =  this_e.attr('data-place-id');
-      
-      
-      var placeRoute =  {
-         originPlaceId: 'ChIJvUf7g6PjDDkRE8zQIiadotU',
-         destinationPlaceId: placeId,
-         destinationLat: lat,
-         destinationLang: lang,
-      }
-      
-      
-      console.log(placeRoute);
-      getGoogleMapDirections(placeRoute);
-      
-   });
-   
-   
-
-
+   document.getElementById('get_directions').addEventListener('click', getDirections);
 
 });
 
@@ -323,14 +325,11 @@ jQuery(document).on('ready',function(){
    <div class="row"><a href="#hospital" class="change_location" data-location-type="hospital">HOSPITALS</a></div>
    <div class="row"><a href="#school" class="change_location" data-location-type="school">SCHOOLS</a></div>
    <div class="row"><a href="#bus_station" class="change_location" data-location-type="bus_station">BUS STATIONS</a></div>
-   <div class="row"><a href="#train_station" class="change_location" data-location-type="train_station">METRO STATIONS</a></div>
+   <div class="row"><a href="#train_station" class="change_location" data-location-type="subway_station,train_station">METRO STATIONS</a></div>
    <div class="row"><a href="#post_office" class="change_location" data-location-type="post_office">POST OFFFICE</a></div>
-   <div class="row"><a href="#taxi_stand" class="change_location" data-location-type="taxi_stand">TAXI STAND</a></div>
-   <div class="row"><a href="#bank_atm" class="change_location" data-location-type="bank,atm">BANK ATM</a></div>
-   <div class="row"><a href="#mosque" class="change_location" data-location-type="mosque">mosque</a></div>
 </div>
 
-<div class="content_output" id="content_output" style="width: 600px; float: left;"><ul id="output_list"></ul></div>
+<div class="content_output" id="content_output" style="width: 100%; float: left;"><ul id="output_list"></ul></div>
 <script id="googlePlace" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx_utm4l1b07fsg1FfSYfb63OMqamhK_Y&libraries=places&callback=initMap" async defer></script>
 <?php /* <script id="googlePlace" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx_utm4l1b07fsg1FfSYfb63OMqamhK_Y&libraries=places&callback=initMap" async defer></script> */ ?>
 </body>
